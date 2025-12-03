@@ -21,7 +21,6 @@ __all__ = [
     "iter_images",
 ]
 
-
 ###### ---- Bild IO ---- ######
  ## Lädt ein Bild, korrigiert EXIF-Orientierung und erzwingt RGB.
  ## Warum: Handy-Fotos haben Rotations-EXIF; Modelle erwarten 3 Kanäle.
@@ -38,15 +37,10 @@ def load_image(path: str | Path, exif_transpose: bool = True, to_rgb: bool = Tru
 
 ## Erzwingt RGB-Modus; verwirft Alpha-Kanal.
 def ensure_rgb(img: Image.Image) -> Image.Image:
-    """Erzwingt RGB; Alpha wird verworfen. Warum: konsistente Normalisierung."""
     return img if img.mode == "RGB" else img.convert("RGB")
 
 ## Konvertiert ein HxWx3 BGR-NumPy-Array in ein PIL RGB-Bild.
 def from_ndarray_bgr(arr: np.ndarray) -> Image.Image:
-    """
-    OpenCV→PIL: BGR→RGB.
-    Warum: OpenCV liefert BGR, Pipelines erwarten RGB.
-    """
     if arr.ndim != 3 or arr.shape[2] != 3:
         raise ValueError("erwarte HxWx3 BGR-Array")
     return Image.fromarray(arr[..., ::-1], mode="RGB")
