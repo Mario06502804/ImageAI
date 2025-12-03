@@ -1,6 +1,11 @@
 import torch
 from pathlib import Path
 import matplotlib.pyplot as plt
+from torch.utils.data import DataLoader
+from torchvision import datasets
+from torchvision.transforms import v2
+from torchvision.io import decode_image
+
 
 
 def FixMeLater():
@@ -8,10 +13,7 @@ def FixMeLater():
     plt.rcParams["savefig.bbox"] = 'tight'  # Ensure tight bounding boxes for saved figures, we only need that for detection? I guess..
     # plt probably unnecessary here? atm atleast?
 
-    from torch.utils.data import DataLoader
-    from torchvision import datasets
-    from torchvision.transforms import v2
-    from torchvision.io import decode_image
+
 
 # We need to grab the current loaded img from pillow.py over here, to transform it.
 # probably something like this?
@@ -117,5 +119,9 @@ testDataset = datasets.Flowers102(
     transform=trainingFlowersTransforms
 )
 
+# Dataloaders
 
+trainLoader = DataLoader(trainDataset, batch_size=32, shuffle=True)
+valLoader = DataLoader(validationDataset, batch_size=32, shuffle=True)
+testLoader = DataLoader(testDataset, batch_size=32, shuffle=True)
 
