@@ -49,10 +49,6 @@ Die Anwendung unterstützt:
 
     pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
-**Weitere Abhängigkeiten:**
-
-    pip install matplotlib
-
 > Für GPU-Training ist eine passende CUDA-Version von PyTorch nötig  
 > (optional, nicht notwendig für Demo).
 

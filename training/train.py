@@ -1,18 +1,20 @@
+import os
 import torch 
 import torch.nn as nn
 import torch.optim as optim
 
-from models.plant_model import create_resnet_model, save_model
+from models.plant_model import create_resnet_model, save_model, load_model
 from data.torchvision import get_dataloaders
 
 criterion = nn.CrossEntropyLoss()
-num_epochs = 300
+num_epochs = 1 
 
 def train(
         num_classes: int = 102,
         batch_size: int = 32,
         learning_rate: float = 1e-3,
-        model_out_path: str = "plant_classifier.pth",
+        model_out_path: str = "model/plant_classifier.pth",
+        resume: bool = True,
 ):
     """
     train the ResNet model on the Flowers102 dataset and save the weights to a file.
@@ -25,11 +27,22 @@ def train(
     # Load dataloaders
     train_loader, val_loader, _ = get_dataloaders(batch_size=batch_size)
 
-    # Create model
-    model = create_resnet_model(num_classes=num_classes, pretrained=True)
-    model.to(device)
+    # Create model and load model if resume is True
+    if resume and os.path.exists(model_out_path):
+        print(f"Saved model found. Resume training from {model_out_path}")
+        model = load_model(
+            path=model_out_path,
+            num_classes=num_classes,
+            use_resnet=True
+        )
+        model.to(device)
+        model.train()
+    else:
+        print("no saved model found. Start training from scratch.")
+        model = create_resnet_model(num_classes=num_classes, pretrained=True)
+        model.to(device)
 
-    # Define loss function and optimizer
+    
     
 
     #optimize trainable parameters only

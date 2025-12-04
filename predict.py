@@ -7,8 +7,11 @@ from pathlib import Path
 from models.plant_model import create_resnet_model
 from data.torchvision import validationFlowersTransforms, get_flowers_names
 
-def load_trainied_model(
-        weights_path: str = "plant_classifier.pth",
+Model_Path = "models/plant_classifier.pth"
+
+
+def load_trained_model(
+        weights_path: str = Model_Path,
         num_classes: int = 102,
         device: str | torch.device = "cpu",
 ) -> torch.nn.Module:
@@ -26,11 +29,12 @@ def load_trainied_model(
     model.eval()
     return model
 
-def preprocess_image(image_path: Path) -> torch.Tensor:
+def preprocess_image(image_path: str | Path) -> torch.Tensor:
 
     #loads and preprocesses an image for prediction.
+    image_path = Path(image_path)
 
-    if not os.path.exists(image_path):
+    if not image_path.exists(image_path):
         raise FileNotFoundError(f"Image not found at {image_path}")
     
     # Load image: Tensor [C, H, W] with dtype uint8
@@ -59,26 +63,28 @@ def predict_image(
 ):
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    img_tensor = preprocess_image(image_path).to(device)
+    
     print(f"Using device: {device}")
 
-    image_path = Path(image_path)
+    print(f"Preprocessing image from {image_path}")
+    img_tensor = preprocess_image(image_path).to(device)
+
+    # image_path = Path(image_path)
 
     # load model
     print(f"Loading model from {weights_path}")
-    model = load_trainied_model(
+    model = load_trained_model(
         weights_path=weights_path,
         num_classes=num_classes,
         device=device
     )
-
-    print(f"Preprocessing image from {image_path}")
 
     with torch.no_grad():
         outputs = model(img_tensor)
         probs = torch.softmax(outputs, dim=1)
         confidence, pred_idx = torch.max(probs, dim=1)
 
+    
     pred_idx = pred_idx.item()
     confidence = confidence.item()
     
@@ -95,7 +101,11 @@ def predict_image(
 
 
 def main(image):
-    predict_image(image) 
+    if len(sys.argv) < 2:
+        print("Usage: python predict.py <image_path>")
+        sys.exit(1)
+
+    image_path = sys.argv[1]    
 
 
 if __name__ == "__main__":
