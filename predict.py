@@ -85,14 +85,13 @@ def predict_image(
     print(f"Confidence: {confidence:.4f}") 
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage:")
-        print(" python predict.py pfad\\zu\\bild.jpg")
-        sys.exit(1)
+def main(image):
+    # if len(sys.argv) < 2:
+    #     print("Usage:")
+    #     print(" python predict.py pfad\\zu\\bild.jpg")
+    #     sys.exit(1)
 
-    image_path = sys.argv[1]
-    predict_image(image_path) 
+    predict_image(image) 
 
 
 if __name__ == "__main__":

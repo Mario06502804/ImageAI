@@ -1,5 +1,6 @@
 from pathlib import Path
 from PIL import Image
+import predict as pred
 
 def loadSingleImage():
     root = Path("img_to_Torch")
@@ -11,14 +12,28 @@ def loadSingleImage():
 
     selected_image = input("Enter the filename of the image to load (with .pt extension): ")
 
-    selected_image = selected_image.replace(".pt", ".jpg") 
-    # Gotta strip the numbers from the filename to open the Dir
-    selectedImageStripped = selected_image
-    jpgDir = selectedImageStripped.split("0")[0]
-    imgDir = imgDir/jpgDir/selected_image # Apparently have to add .jpg here?? probably cuz we strip it above?
-    # jfc this is stupid code. FIX ME LATER PLS
+    selected_image = selected_image.replace(".pt", ".jpg")
 
-    img = Image.open(imgDir) 
+    # Name ohne Extension (z.B. Love01)
+    base_name = selected_image.replace(".jpg", "")
+
+    # Automatisch richtigen Ordner finden
+    found_path = None
+    for folder in imgDir.iterdir():
+        if folder.is_dir():
+            candidate = folder / selected_image
+            if candidate.exists():
+                found_path = candidate
+                break
+
+    if not found_path:
+        print(f"ERROR: Could not find {selected_image} in any folder inside {imgDir}")
+        return
+
+    img = Image.open(found_path)
     img.show()
 
-    #continue with loading the .pt file to send it to the model afterwards
+    pred.main(found_path) 
+    # execute prediction.py from here with the selected image as param.
+
+
