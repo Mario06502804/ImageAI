@@ -1,15 +1,19 @@
-# simple training loop
+import data.torchvision as vision
+import data.prepare_images as prep
+import models.plant_model as plantModel
+import data.loadSingleImage as loadImg
 
-for epoch in range(10):
-    model.train()
-    for images, labels in trainLoader:
-        images, labels = images.to(device), labels.to(device)
-
-        optimizer.zero_grad()
-        outputs = model(images)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-
-    print(f"Epoch {epoch}: Loss = {loss.item():.4f}")
-
+def main():
+    print("-----MAIN MENU-----")
+    print("--------CLI--------")
+    print("1. Load Image to Analyze by AI")
+    print("2. Train Plantmodel")
+    print("3. Validate Plantmodel")
+    choice = input()    
+    if choice == "1":
+        loadImg.loadSingleImage()
+    elif choice == "2":
+        print("Not implemented yet") # Train model
+    elif choice == "3":
+        print("Not implemented yet") # Validate model
+main()
