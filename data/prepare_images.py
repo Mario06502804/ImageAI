@@ -1,8 +1,10 @@
 from pathlib import Path
 import torch
-from pillow import load_image, make_eval_pipeline, to_numpy, iter_images
+from data.pillow import load_image, make_eval_pipeline, to_numpy, iter_images
+## if we just do from pillow import instead data.pillow we can get a naming conflict (apparently thats the issue?) should be fixed this way on any
 
 #Pipeline erzeugen (wie torchvision transforms)
+#Happens right on import by main.py
 pipeline = make_eval_pipeline(
     size=224,         
     shorter=256,
