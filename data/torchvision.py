@@ -6,7 +6,7 @@ from torchvision import datasets
 from torchvision.transforms import v2
 from torchvision.io import decode_image
 
-plt.rcParams["savefig.bbox"] = 'tight'
+plt.rcParams["savefig.bbox"] = 'tight' # only need that for object detection
 
 # Define transform ONLY for the TRAINING!
 trainingTransforms = v2.Compose([
@@ -86,5 +86,8 @@ def get_dataloaders(batch_size: int = 32):
     val_loader = DataLoader(validationDataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(testDataset, batch_size=batch_size, shuffle=False)
     return train_loader, val_loader, test_loader
+
+def get_flowers_names():
+    return trainDataset.classes
 
 

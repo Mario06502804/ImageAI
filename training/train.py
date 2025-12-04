@@ -6,7 +6,7 @@ from models.plant_model import create_resnet_model, save_model
 from data.torchvision import get_dataloaders
 
 criterion = nn.CrossEntropyLoss()
-num_epochs = 10
+num_epochs = 300
 
 def train(
         num_classes: int = 102,
@@ -79,7 +79,7 @@ def train(
     print(f"\nTraining abgeschlossen. Modell gespeichert unter: {model_out_path}")
 
 
-def evaluate(model: nn.Module, dataloader, crterion, device: torch.device):
+def evaluate(model: nn.Module, dataloader, criterion, device: torch.device):
     """
     Führt eine Evaluierung auf dem Validierungsdatensatz durch.
     Gibt (loss, accuracy) zurück.
@@ -109,5 +109,4 @@ def evaluate(model: nn.Module, dataloader, crterion, device: torch.device):
 
                                       
 if __name__ == "__main__":
-
     train()            

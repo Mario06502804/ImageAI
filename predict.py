@@ -1,16 +1,17 @@
+import os
 import torch
 import sys
 
 from torchvision.io import read_image
 from pathlib import Path
 from models.plant_model import create_resnet_model
-from data.torchvision import validationFlowersTransforms
+from data.torchvision import validationFlowersTransforms, get_flowers_names
 
 def load_trainied_model(
-        weights_path: str = "models/flower_resnet.pth",
+        weights_path: str = "plant_classifier.pth",
         num_classes: int = 102,
         device: str | torch.device = "cpu",
-) -> torch.nn.module:
+) -> torch.nn.Module:
     """
     creates a restnet-model & loads trainied weights.
     
@@ -29,7 +30,7 @@ def preprocess_image(image_path: Path) -> torch.Tensor:
 
     #loads and preprocesses an image for prediction.
 
-    if not image_path.exists():
+    if not os.path.exists(image_path):
         raise FileNotFoundError(f"Image not found at {image_path}")
     
     # Load image: Tensor [C, H, W] with dtype uint8
@@ -51,8 +52,9 @@ def preprocess_image(image_path: Path) -> torch.Tensor:
 def predict_image(
         
         image_path:str,
-        weights_path: str = "models/flower_resnet.pth",   #loads model and image for prediction and returns predicted class index.
+        weights_path: str = "plant_classifier.pth",   #loads model and image for prediction and returns predicted class index.
         num_classes: int = 102,
+        
 
 ):
     
@@ -79,19 +81,21 @@ def predict_image(
 
     pred_idx = pred_idx.item()
     confidence = confidence.item()
+    
+    class_names = get_flowers_names()
+    if 0 <= pred_idx < len(class_names):
+        class_name = class_names[pred_idx]
+    else:
+        class_name = f"Unbekannte Klasse (Index {pred_idx})"
+ 
+    print("\n=== Vorhersage ===")
+    print(f"Klasse: {class_name}")
+    print(f"Index: {pred_idx}")
+    print(f"Confidence: {confidence:.4f}")
 
-    print(f"Predicted class index: {pred_idx}")
-    print(f"Confidence: {confidence:.4f}") 
 
-
-def main():
-    if len(sys.argv) < 2:
-        print("Usage:")
-        print(" python predict.py pfad\\zu\\bild.jpg")
-        sys.exit(1)
-
-    image_path = sys.argv[1]
-    predict_image(image_path) 
+def main(image):
+    predict_image(image) 
 
 
 if __name__ == "__main__":

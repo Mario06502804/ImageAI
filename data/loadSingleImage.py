@@ -1,5 +1,6 @@
 from pathlib import Path
 from PIL import Image
+import predict as pred
 
 def loadSingleImage():
     root = Path("img_to_Torch")
@@ -11,17 +12,16 @@ def loadSingleImage():
 
     selected_image = input("Enter the filename of the image to load (without extension): ").strip()
 
-    selected_image = selected_image.replace(".pt","").replace(".jpg", "") 
+    selected_image = selected_image.replace(".pt", ".jpg")
 
-    pt_name = selected_image + ".pt"
-    jpg_name = selected_image + ".jpg"
+    # Name ohne Extension (z.B. Love01)
+    base_name = selected_image.replace(".jpg", "")
 
-
-    # Automatisch richtigen Ordner finden 
+    # Automatisch richtigen Ordner finden
     found_path = None
     for folder in imgDir.iterdir():
         if folder.is_dir():
-            candidate = folder / jpg_name
+            candidate = folder / selected_image
             if candidate.exists():
                 found_path = candidate
                 break
@@ -32,7 +32,8 @@ def loadSingleImage():
 
     img = Image.open(found_path)
     img.show()
+    # execute prediction.py from here with the selected image as param.
+    pred.main(found_path) 
+    
 
-    print(f"Loaded image from: {found_path}")
 
-    # continue with loading the .pt file to send it to the model afterwards
