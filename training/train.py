@@ -1,5 +1,4 @@
 import os
-from sympy import N
 import torch 
 import torch.nn as nn
 import torch.optim as optim
@@ -65,6 +64,9 @@ def train(
         lr=learning_rate
     )
 
+    best_val_acc = 0.0
+    best_state_dict = None
+
     # Training loop
     for epoch in range(1, NUM_EPOCHS +1):
         model.train()
@@ -72,7 +74,7 @@ def train(
         correct = 0
         total = 0
 
-        print(f"{Green}\n=== Epoche {epoch}/{NUM_EPOCHS} ==={RESET}")
+        print(f"{Green}\n=== Epoche {epoch}/{NUM_CLASSES} ==={RESET}")
 
         for batch_idx, (images, labels) in enumerate(train_loader, start=1):
             images = images.to(device)
@@ -101,9 +103,21 @@ def train(
         val_loss, val_acc = evaluate(model, val_loader, criterion, device)
         print(f"Val  Loss: {val_loss:.4f} | Val Accuracy: {val_acc:.2f}%")
 
+        if val_acc > best_val_acc:
+            best_val_acc = val_acc
+            best_state_dict = model.state_dict()
+            print(f"--> Neue beste Validation Accuracy: {best_val_acc:.2f}%")
+
+    if best_state_dict is not None:
+        model.load_state_dict(best_state_dict)
+        print("\nLade bestes Modell mit Validation Accuracy: {best_val_acc:.2f}%")
+    else:
+        print("\nWarnung: Kein bestes Modell gefunden, speichere letzten Stand.")   
+
     # Save the trained model
     save_model(model, model_out_path)
     print(f"\nTraining abgeschlossen. Modell gespeichert unter: {model_out_path}")
+    print(f"Beste Validation Accuracy über alle Epochen: {best_val_acc:.2f}%")
 
 
 def evaluate(model: nn.Module, dataloader, criterion, device: torch.device):
