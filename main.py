@@ -3,7 +3,7 @@ import data.prepare_images as prep
 import models.plant_model as plantModel
 import data.loadSingleImage as loadImg
 import training.train as train
-import training.train as evaluate
+from config import MODEL, val_loader, DEVICE
 
 RESET = "\033[0m"
 Blue = "\033[34m"
@@ -25,7 +25,7 @@ def main():
     elif choice == "2":
         train.train()
     elif choice == "3":
-        evaluate.evaluate(model, device,dataloader, criterion)
+        train.evaluate(MODEL, val_loader, train.criterion, DEVICE) # WIP - No output yet FIXME
     elif choice == "0":
         print("Exiting...")
         exit()
